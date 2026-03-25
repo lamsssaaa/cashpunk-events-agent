@@ -1,0 +1,19 @@
+name: Daily Events Generator
+on:
+  schedule:
+    - cron: '0 7 * * *'  # Chaque jour à 8h heure suisse
+  workflow_dispatch:  # Pour tester manuellement
+
+jobs:
+  generate-events:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - run: pip install requests google-generativeai firebase-admin
+      - run: python generate_events.py
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          FIREBASE_CREDENTIALS: ${{ secrets.FIREBASE_CREDENTIALS }}
