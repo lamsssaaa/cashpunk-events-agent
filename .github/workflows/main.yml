@@ -2,8 +2,8 @@ name: Daily Events Generator
 
 on:
   schedule:
-    - cron: '0 6 * * *'  # Tous les jours à 6h UTC
-  workflow_dispatch:       # Permet de lancer manuellement
+    - cron: '0 6 * * *'
+  workflow_dispatch:
 
 jobs:
   generate-events:
