@@ -1,23 +1,25 @@
 name: Daily Events Generator
+
 on:
   schedule:
-    - cron: '0 7 * * *'
-  workflow_dispatch:
+    - cron: '0 6 * * *'  # Tous les jours à 6h UTC
+  workflow_dispatch:       # Permet de lancer manuellement
 
 jobs:
   generate-events:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v3
+
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v4
         with:
           python-version: '3.11'
+
       - name: Install dependencies
-        run: pip install requests firebase-admin google-generativeai
-      - name: List files
-        run: ls -la
+        run: |
+          pip install requests google-generativeai firebase-admin
+
       - name: Run script
         run: python generate_events.py
         env:
