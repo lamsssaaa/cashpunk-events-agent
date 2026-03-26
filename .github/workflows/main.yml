@@ -8,12 +8,18 @@ jobs:
   generate-events:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - run: pip install requests google-generativeai firebase-admin
-      - run: python generate_events.py
+      - name: Install dependencies
+        run: pip install requests firebase-admin google-generativeai
+      - name: List files
+        run: ls -la
+      - name: Run script
+        run: python generate_events.py
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           FIREBASE_CREDENTIALS: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
