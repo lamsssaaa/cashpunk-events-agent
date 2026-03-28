@@ -14,7 +14,7 @@ GEMINI_KEY = os.environ['GEMINI_API_KEY']
 CANTONS = ["Genève", "Vaud", "Fribourg", "Neuchâtel", "Valais", "Jura"]
 
 def generate_events(canton):
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={GEMINI_KEY}"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_KEY}"
     prompt = f"""Génère 3 événements typiques dans le canton de {canton} en Suisse romande dans les 30 prochains jours. Pour chaque événement retourne un JSON avec ces champs: title, description, location, date (ISO8601), price, category (restaurant/activite/location/autre). Retourne UNIQUEMENT un tableau JSON valide sans texte avant ou après."""
     body = {"contents": [{"parts": [{"text": prompt}]}]}
     response = requests.post(url, json=body)
