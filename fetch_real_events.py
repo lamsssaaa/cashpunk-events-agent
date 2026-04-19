@@ -58,9 +58,22 @@ CANTON_DEFAULT_PHOTOS = {
 }
 
 CATEGORIES = [
-    "Musique", "Sport", "Culture", "Gastronomie", "Nightlife",
-    "Festival", "Marché", "Théâtre", "Exposition", "Communauté",
+    "Concerts & Festivals", "Nightlife", "Sport",
+    "Arts & Spectacles", "Food", "Fêtes & Traditions",
+    "Rencontres & Ateliers", "Cashpunk Exclusif",
 ]
+
+# Firestore values matching iOS EventCategory.firestoreValue
+CATEGORY_FIRESTORE = {
+    "Concerts & Festivals": "concerts_festivals",
+    "Nightlife": "nightlife",
+    "Sport": "sport",
+    "Arts & Spectacles": "arts_spectacles",
+    "Food": "food",
+    "Fêtes & Traditions": "fetes_traditions",
+    "Rencontres & Ateliers": "rencontres_ateliers",
+    "Cashpunk Exclusif": "cashpunk",
+}
 
 DATE_START = "2026-06-01T00:00:00"
 DATE_END = "2027-12-31T23:59:59"
@@ -361,25 +374,23 @@ def parse_json_response(text):
 
 
 def guess_category(text):
-    """Guess event category from title/description text."""
+    """Guess event category from title/description text. Returns display name."""
     text_lower = text.lower()
     keywords = {
-        "Musique": ["concert", "musique", "jazz", "rock", "orchestre", "dj", "rap", "hip-hop", "chanson"],
-        "Sport": ["sport", "course", "marathon", "football", "hockey", "ski", "trail", "cyclisme", "vélo"],
-        "Culture": ["culture", "cinéma", "film", "conférence", "lecture", "salon", "livre"],
-        "Gastronomie": ["gastronomie", "cuisine", "vin", "dégustation", "food", "brunch", "restaurant"],
-        "Nightlife": ["nightlife", "soirée", "club", "dj set", "party", "nuit", "after"],
-        "Festival": ["festival", "fête", "carnaval", "festivités"],
-        "Marché": ["marché", "brocante", "vide-grenier", "artisanat", "noël"],
-        "Théâtre": ["théâtre", "spectacle", "comédie", "danse", "ballet", "opéra"],
-        "Exposition": ["exposition", "expo", "musée", "galerie", "art", "peinture", "photo"],
-        "Communauté": ["communauté", "bénévol", "association", "rencontre", "atelier", "workshop"],
+        "Concerts & Festivals": ["concert", "musique", "jazz", "rock", "orchestre", "dj", "rap", "hip-hop", "chanson", "festival", "live music"],
+        "Nightlife": ["nightlife", "soirée", "club", "dj set", "party", "nuit", "after", "boîte"],
+        "Sport": ["sport", "course", "marathon", "football", "hockey", "ski", "trail", "cyclisme", "vélo", "fitness", "natation"],
+        "Arts & Spectacles": ["art", "culture", "théâtre", "cinéma", "spectacle", "comédie", "danse", "ballet", "opéra", "exposition", "expo", "musée", "galerie", "peinture", "photo", "conférence", "lecture"],
+        "Food": ["gastronomie", "cuisine", "vin", "dégustation", "food", "brunch", "restaurant", "bière", "cocktail"],
+        "Fêtes & Traditions": ["fête", "tradition", "carnaval", "escalade", "noël", "brocante", "marché", "vide-grenier", "artisanat", "1er août"],
+        "Rencontres & Ateliers": ["communauté", "rencontre", "atelier", "meetup", "afterwork", "yoga", "workshop", "bénévol", "association", "networking"],
+        "Cashpunk Exclusif": ["cashpunk", "exclusif"],
     }
     for category, kws in keywords.items():
         for kw in kws:
             if kw in text_lower:
                 return category
-    return "Communauté"
+    return "Arts & Spectacles"
 
 
 def write_to_firestore(db, events):
@@ -454,7 +465,7 @@ def write_to_firestore(db, events):
             "status": "pending",
             "source": event.get("source", "unknown"),
             "sourceURL": event.get("sourceURL", ""),
-            "category": event.get("category", "Communauté"),
+            "category": CATEGORY_FIRESTORE.get(event.get("category", ""), "arts_spectacles"),
             "startTime": event.get("startTime", ""),
         }
 
