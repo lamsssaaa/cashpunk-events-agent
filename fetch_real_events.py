@@ -63,7 +63,7 @@ CATEGORIES = [
 ]
 
 DATE_START = "2026-06-01T00:00:00"
-DATE_END = "2027-02-28T23:59:59"
+DATE_END = "2027-12-31T23:59:59"
 
 # ── Firebase init ───────────────────────────────────────────────────────────
 
@@ -203,8 +203,8 @@ def fetch_eventbrite_events(canton, coords):
             pagination = data.get("pagination", {})
             if page >= pagination.get("page_count", 1):
                 break
-            if page >= 5:  # cap at 5 pages per canton
-                print(f"  [Eventbrite] Capped at 5 pages")
+            if page >= 20:  # cap at 20 pages per canton
+                print(f"  [Eventbrite] Capped at 20 pages")
                 break
             page += 1
             time.sleep(0.5)
@@ -247,9 +247,10 @@ def fetch_claude_events(canton):
 
     prompt = (
         f"Recherche sur le web les vrais événements à {canton} en Suisse "
-        f"entre juin 2026 et février 2027. "
-        f"Cherche sur agenda.ch, sortir.ch, local.ch, eventfrog.ch, "
-        f"et les sites officiels du canton. "
+        f"entre juin 2026 et décembre 2027. "
+        f"Cherche sur agenda.ch, sortir.ch, eventfrog.ch, allevents.in, facebook.com/events, "
+        f"ticketcorner.ch, fnacspectacles.ch, et les sites officiels du canton. "
+        f"Inclus festivals, concerts, expositions, marchés, sports, théâtre, gastronomie. "
         f"Retourne un JSON strict (tableau) avec cette structure pour chaque événement: "
         f'{{"title": "...", "description": "...", "date": "YYYY-MM-DDTHH:MM:SS", '
         f'"endDate": "YYYY-MM-DDTHH:MM:SS ou null si un seul jour", '
@@ -257,18 +258,18 @@ def fetch_claude_events(canton):
         f'"canton": "{canton}", "category": "...", "price": "... CHF", '
         f'"organizer": "...", "sourceURL": "...", "photoURL": "URL image ou null"}}. '
         f"Categories possibles: {', '.join(CATEGORIES)}. "
-        f"Minimum 8 événements. Uniquement des événements RÉELS avec sources vérifiables. "
+        f"Minimum 30 événements. Uniquement des événements RÉELS avec sources vérifiables. "
         f"Ne invente rien. Retourne UNIQUEMENT le tableau JSON, sans markdown ni texte."
     )
 
     try:
         response = client.messages.create(
-            model="claude-sonnet-4-5",
-            max_tokens=4000,
+            model="claude-sonnet-4-5-20250929",
+            max_tokens=8000,
             tools=[{
                 "type": "web_search_20250305",
                 "name": "web_search",
-                "max_uses": 5,
+                "max_uses": 10,
             }],
             messages=[{"role": "user", "content": prompt}],
         )

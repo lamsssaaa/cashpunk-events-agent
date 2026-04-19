@@ -1,8 +1,8 @@
-name: Weekly Real Events (Eventbrite + Claude)
+name: Daily Real Events (Eventbrite + Claude)
 
 on:
   schedule:
-    - cron: '0 6 * * 1'   # every Monday at 06:00 UTC (08:00 Swiss time)
+    - cron: '0 6 * * *'   # every day at 06:00 UTC (08:00 Swiss time)
   workflow_dispatch:        # allow manual trigger from GitHub UI
 
 jobs:
